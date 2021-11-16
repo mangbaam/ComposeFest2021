@@ -20,15 +20,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.AlignmentLine
-import androidx.compose.ui.layout.FirstBaseline
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import kotlinx.coroutines.launch
 import mangbaam.compose.week2.ui.theme.Week2Theme
@@ -42,6 +42,150 @@ class MainActivity : ComponentActivity() {
                 BodyContent3()
             }
         }
+    }
+}
+
+@Composable
+fun TwoTexts(modifier: Modifier = Modifier, text1: String, text2: String) {
+    Row(modifier = modifier.height(IntrinsicSize.Min)) {
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp)
+                .wrapContentWidth(Alignment.Start),
+            text = text1
+        )
+        Divider(color = Color.Black, modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp))
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 4.dp)
+                .wrapContentWidth(Alignment.End),
+            text = text2
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TwoTextsPreview() {
+    Week2Theme {
+        Surface {
+            TwoTexts(text1 = "안뇽", text2 = "칭구들")
+        }
+    }
+}
+
+@Composable
+fun DecoupledConstraintLayout() {
+    BoxWithConstraints {
+        val constraints = if (maxWidth < maxHeight) {
+            decoupledConstraints(margin = 16.dp)
+        } else {
+            decoupledConstraints(margin = 32.dp)
+        }
+
+        ConstraintLayout(constraints) {
+            Button(
+                onClick = {},
+                modifier = Modifier.layoutId("button")
+            ) {
+                Text("Button")
+            }
+            Text("Text", Modifier.layoutId("text"))
+        }
+    }
+}
+/*
+@Preview
+@Composable
+fun DecoupledConstraintLayoutPreview() {
+    Week2Theme {
+        DecoupledConstraintLayout()
+    }
+}*/
+
+private fun decoupledConstraints(margin: Dp): ConstraintSet {
+    return ConstraintSet {
+        val button = createRefFor("button")
+        val text = createRefFor("text")
+
+        constrain(button) {
+            top.linkTo(parent.top, margin = margin)
+        }
+        constrain(text) {
+            top.linkTo(button.bottom, margin)
+        }
+    }
+}
+
+@Composable
+fun LargeConstraintLayout() {
+    ConstraintLayout {
+        val text = createRef()
+
+        val guideline = createGuidelineFromStart(fraction = 0.5f)
+        Text(
+            "This is a very very very very very very very long text",
+            Modifier.constrainAs(text) {
+                linkTo(start = guideline, end = parent.end)
+                // 텍스트 길이에 맞춰 줄바꿈
+                width = Dimension.preferredWrapContent
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LargeConstraintLayoutPreview() {
+    Week2Theme {
+        LargeConstraintLayout()
+    }
+}
+
+@Composable
+fun ConstraintLayoutContent() {
+    ConstraintLayout {
+        // 제한할 컴포저블 참조 생성
+        val (button1, button2, text) = createRefs()
+
+        Button(
+            onClick = {},
+            // button 참조를 버튼에 할당하고 ConstraintLayout의 위쪽에 제한
+            modifier = Modifier.constrainAs(button1) {
+                top.linkTo(parent.top, margin = 16.dp)
+            }
+        ) {
+            Text("Button1")
+        }
+
+        // text 참조를 Text에 할당하고 버튼의 밑에 제한
+        Text("Text", Modifier.constrainAs(text) {
+            top.linkTo(button1.bottom, margin = 16.dp)
+            centerAround(button1.end)
+        })
+
+        val barrier = createEndBarrier(button1, text)
+        Button(
+            onClick = {},
+            modifier = Modifier.constrainAs(button2) {
+                top.linkTo(parent.top, margin = 16.dp)
+                start.linkTo(barrier)
+            }
+        ) {
+            Text("Button2")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ConstraintLayoutContentPreview() {
+    Week2Theme {
+        ConstraintLayoutContent()
     }
 }
 
@@ -141,21 +285,21 @@ fun BodyContent3(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 fun Week2Preview() {
     Week2Theme {
         BodyContent3()
     }
-}
+}*/
 
-@Preview
+/*@Preview
 @Composable
 fun ChipPreview() {
     Week2Theme {
         Chip(text = "안녕 여러분~")
     }
-}
+}*/
 
 @Composable
 fun MyOwnColumn(
@@ -197,11 +341,11 @@ fun BodyContent2(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 fun MyOwnColumnPreview() {
     BodyContent2()
-}
+}*/
 
 fun Modifier.firstBaselineToTop(
     firstBaselineToTop: Dp
@@ -221,21 +365,21 @@ fun Modifier.firstBaselineToTop(
     }
 )
 
-@Preview
+/*@Preview
 @Composable
 fun TextWithPaddingToBaseLinePreview() {
     Week2Theme {
         Text("Hi there!", Modifier.firstBaselineToTop(32.dp))
     }
-}
+}*/
 
-@Preview
+/*@Preview
 @Composable
 fun TextWithNormalPaddingPreview() {
     Week2Theme {
         Text("Hi there!", Modifier.padding(top = 32.dp))
     }
-}
+}*/
 
 @Composable
 fun ScrollingList() {
