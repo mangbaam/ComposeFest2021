@@ -58,6 +58,8 @@
       <sourceFolder url="file://$MODULE_DIR$/../../../start/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../../start/src/main/res" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../../../start/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../start/build/generated/res/resValues/debug" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../start/build/generated/source/buildConfig/debug" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/../../../start/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../start/build" />
     </content>
